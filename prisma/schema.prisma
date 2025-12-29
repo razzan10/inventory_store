@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  OWNER
+  KASIR
+}
+
+model users {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(KASIR)
+  createdAt DateTime @default(now())
+
+  itemIn  item_in[]
+  itemOut item_out[]
+  selling selling[]
+}
+
+model categories {
+  category_id   Int     @id @default(autoincrement())
+  category_name String
+  description   String?
+
+  item items[]
+}
+
+model suppliers {
+  supplier_id   Int     @id @default(autoincrement())
+  supplier_name String
+  phone_number  String?
+  address       String?
+
+  item items[]
+}
+
+model items {
+  item_id        Int    @id @default(autoincrement())
+  item_name      String
+  purchase_price Int
+  selling_price  Int
+  stock          Int
+  units          String //satuan
+
+  categoryId Int
+  category   categories @relation(fields: [categoryId], references: [category_id])
+
+  supplierId Int
+  supplier   suppliers @relation(fields: [supplierId], references: [supplier_id])
+
+  itemIn        item_in[]
+  itemOut       item_out[]
+  detailSelling detail_selling[]
+}
+
+model item_in {
+  item_in_id  Int      @id @default(autoincrement())
+  qty         Int
+  date        DateTime @default(now())
+  description String?
+
+  userId Int
+  user   users @relation(fields: [userId], references: [id])
+
+  itemId Int
+  item   items @relation(fields: [itemId], references: [item_id])
+}
+
+model item_out {
+  item_out_id Int      @id @default(autoincrement())
+  qty         Int
+  date        DateTime @default(now())
+  reasons     String
+
+  userId Int
+  user   users @relation(fields: [userId], references: [id])
+
+  itemId Int
+  item   items @relation(fields: [itemId], references: [item_id])
+}
+
+model selling {
+  selling_id Int      @id @default(autoincrement())
+  date       DateTime @default(now())
+  total      Int
+
+  userId Int
+  user   users @relation(fields: [userId], references: [id])
+
+  detail detail_selling[]
+}
+
+model detail_selling {
+  detail_selling_id Int      @id @default(autoincrement())
+  date              DateTime @default(now())
+  qty               Int
+
+  itemId Int
+  item   items @relation(fields: [itemId], references: [item_id])
+
+  itemSellingId Int
+  selling       selling @relation(fields: [itemSellingId], references: [selling_id])
+}
