@@ -5,7 +5,7 @@ export const register = async (req, res) => {
     const user = await registerUser(req.body);
     res.json(user);
   } catch (error) {
-    res.status(401).json({ message: e.message });
+    res.status(401).json({ message: error.message });
   }
 };
 
@@ -14,6 +14,6 @@ export const login = async (req, res) => {
     const result = await loginUser(req.body);
     res.json(login);
   } catch (error) {
-    res.status(401).json({ message: e.message });
+    res.status(401).json({ message: error.message });
   }
 };

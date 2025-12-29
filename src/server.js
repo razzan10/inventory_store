@@ -1,5 +1,8 @@
+import dotenv from "dotenv";
 import app from "./app.js";
 
-app.listen(3000, () => {
-  console.log("API RUNNING AT PORT 3000");
+dotenv.config();
+
+app.listen(2000, () => {
+  console.log("API RUNNING AT PORT 2000");
 });
